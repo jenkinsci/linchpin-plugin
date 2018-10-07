@@ -1,3 +1,5 @@
+package Installation;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.EnvVars;
 import hudson.Extension;

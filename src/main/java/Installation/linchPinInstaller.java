@@ -1,3 +1,5 @@
+package Installation;
+
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -10,6 +12,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
 import java.net.URL;
+
 /**
  * @author Aviel
  */
