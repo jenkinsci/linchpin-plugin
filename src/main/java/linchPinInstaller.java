@@ -34,6 +34,9 @@ public class linchPinInstaller extends ToolInstaller {
                 requirement.mkdirs();
 
                 installation(listener,requirement,node);
+
+                print(listener,"LinchPin installed successfully");
+                requirement.deleteRecursive();
             }
         }else {
             print(listener, "This plugin is not supporting your OS yet.");
@@ -68,9 +71,16 @@ public class linchPinInstaller extends ToolInstaller {
 
         //Install linchpin
         try{
-            toCmd(dirToInstall.getParent()+ "",dirToInstall.getParent()+"/venv/bin/pip install linchpin",node,listener);
+            toCmd(dirToInstall.getParent()+ "/venv","bin/pip install linchpin",node,listener);
         }catch (Exception e){
             print(listener, "Skipping installation - LinchPin "+e.getMessage());
+        }
+
+        //Initial linchpin
+        try{
+            toCmd(dirToInstall.getParent()+ "/venv","bin/linchpin init",node,listener);
+        }catch (Exception e){
+            print(listener, "Skipping initialization - LinchPin "+e.getMessage());
         }
     }
 
@@ -121,12 +131,6 @@ public class linchPinInstaller extends ToolInstaller {
             throws IOException, InterruptedException{
         Launcher.ProcStarter starter = node.createLauncher(listener).launch().cmds(command.split(" "));
         int exit = starter.pwd(pwd).stdout(listener).join();
-        if(exit!=0) listener.getLogger().println("Exit code is " + exit);
-    }
-    private void toCmd(String command,Node node, TaskListener listener)
-            throws IOException, InterruptedException{
-        Launcher.ProcStarter starter = node.createLauncher(listener).launch().cmds(command.split(" "));
-        int exit = starter.stdout(listener).join();
         if(exit!=0) listener.getLogger().println("Exit code is " + exit);
     }
 
