@@ -4,6 +4,7 @@ import hudson.model.*;
 import hudson.slaves.NodeSpecific;
 import hudson.tasks.BuildWrapperDescriptor;
 import hudson.tools.ToolInstallation;
+import hudson.util.ArgumentListBuilder;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildWrapper;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -39,18 +40,38 @@ public class linchPinWrapper extends SimpleBuildWrapper {
     public void setUp(Context context, Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener, EnvVars initialEnvironment)
             throws IOException, InterruptedException {
         installIfNecessary(context,workspace,listener,initialEnvironment);
-        modifyPinFile(pinfile);
+        modifyPinFile(pinfile,listener);
+        toCmd(installationHome+"/venv","bin/linchpin up",launcher,listener);
+    }
+
+    /**
+     * Help method to launch commands to cmd
+     * @param pwd - the dir that the command is running in
+     * @param command - the command itself
+     * @param launcher
+     * @param listener
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private void toCmd(String pwd,String command,Launcher launcher, TaskListener listener)
+            throws IOException, InterruptedException{
+        Launcher.ProcStarter starter = launcher.launch().cmds(command.split(" "));
+        int exit = starter.pwd(pwd).stdout(listener).join();
+        if(exit!=0) listener.getLogger().println("Exit code is " + exit);
     }
 
     /**
      * Modify PinFile - if PinFile inserted by the user is empty - use default
      * @param pinFile
+     * @param listener
      * @throws IOException
      */
-    private void modifyPinFile(String pinFile) throws IOException{
-        if(pinFile == null) return;
-        String pinFilePath = installationHome+"/venv/PinFile";
-        BufferedWriter writer = new BufferedWriter(new FileWriter(pinFilePath));
+    private void modifyPinFile(String pinFile,TaskListener listener) throws IOException{
+        if(pinFile == null) {
+            listener.getLogger().println("Using default PinFile");
+            return;
+        }
+        BufferedWriter writer = new BufferedWriter(new FileWriter(installationHome+"/venv/PinFile"));
         writer.write(pinFile+"\n");
         writer.close();
     }
