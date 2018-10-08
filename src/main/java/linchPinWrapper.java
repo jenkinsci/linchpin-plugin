@@ -16,15 +16,35 @@ import java.io.IOException;
 import java.util.Map;
 
 public class linchPinWrapper extends SimpleBuildWrapper {
-    private String installation, pinfile;
+    private String installation, pinfile,layoutFile,topologyFile,layoutFileName,topologyFileName;
     private String installationHome = null;
 
     @DataBoundConstructor
     public linchPinWrapper() {}
 
     @DataBoundSetter
-    public void setPinfile(String pinfile){
-        this.pinfile = Util.fixEmpty(pinfile);
+    public void setPinFile(String file){
+        this.pinfile = Util.fixEmpty(file);
+    }
+
+    @DataBoundSetter
+    public void setLayoutFile(String file){
+        this.layoutFile = Util.fixEmpty(file);
+    }
+
+    @DataBoundSetter
+    public void setTopologyFile(String file){
+        this.topologyFile = Util.fixEmpty(file);
+    }
+
+    @DataBoundSetter
+    public void setLayoutFileName(String name){
+        this.layoutFileName = Util.fixEmpty(name);
+    }
+
+    @DataBoundSetter
+    public void setTopologyFileName(String name){
+        this.topologyFileName = Util.fixEmpty(name);
     }
 
     public String getInstallation() {
@@ -40,8 +60,29 @@ public class linchPinWrapper extends SimpleBuildWrapper {
     public void setUp(Context context, Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener, EnvVars initialEnvironment)
             throws IOException, InterruptedException {
         installIfNecessary(context,workspace,listener,initialEnvironment);
-        modifyPinFile(pinfile,listener);
+
+        createFile(layoutFile,"/venv/layouts/",layoutFileName);
+        createFile(topologyFile,"/venv/topologies/",topologyFileName);
+        modifyFile(pinfile);
+
         toCmd(installationHome+"/venv","bin/linchpin up",launcher,listener);
+    }
+
+    /**
+     * Create files for linchpin configuration
+     * @param file
+     * @param path
+     * @param name
+     * @throws IOException
+     */
+    private void createFile(String file, String path, String name) throws IOException{
+        if(file == null) return;
+        if(name == null) name = "defaultName.yml";
+        String fileName = installationHome+path+name;
+        if(!fileName.endsWith(".yml")) fileName+=".yml";
+        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+        writer.write(file+"\n");
+        writer.close();
     }
 
     /**
@@ -61,16 +102,12 @@ public class linchPinWrapper extends SimpleBuildWrapper {
     }
 
     /**
-     * Modify PinFile - if PinFile inserted by the user is empty - use default
+     * Modify File - if empty - use default
      * @param pinFile
-     * @param listener
      * @throws IOException
      */
-    private void modifyPinFile(String pinFile,TaskListener listener) throws IOException{
-        if(pinFile == null) {
-            listener.getLogger().println("Using default PinFile");
-            return;
-        }
+    private void modifyFile(String pinFile) throws IOException{
+        if(pinFile == null) return;
         BufferedWriter writer = new BufferedWriter(new FileWriter(installationHome+"/venv/PinFile"));
         writer.write(pinFile+"\n");
         writer.close();
