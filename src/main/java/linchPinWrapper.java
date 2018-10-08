@@ -15,15 +15,35 @@ import java.io.IOException;
 import java.util.Map;
 
 public class linchPinWrapper extends SimpleBuildWrapper {
-    private String installation, pinfile;
+    private String installation, pinfile,layoutFile,topologyFile,layoutFileName,topologyFileName;
     private String installationHome = null;
 
     @DataBoundConstructor
     public linchPinWrapper() {}
 
     @DataBoundSetter
-    public void setPinfile(String pinfile){
-        this.pinfile = Util.fixEmpty(pinfile);
+    public void setPinFile(String file){
+        this.pinfile = Util.fixEmpty(file);
+    }
+
+    @DataBoundSetter
+    public void setLayoutFile(String file){
+        this.layoutFile = Util.fixEmpty(file);
+    }
+
+    @DataBoundSetter
+    public void setTopologyFile(String file){
+        this.topologyFile = Util.fixEmpty(file);
+    }
+
+    @DataBoundSetter
+    public void setLayoutFileName(String name){
+        this.layoutFileName = Util.fixEmpty(name);
+    }
+
+    @DataBoundSetter
+    public void setTopologyFileName(String name){
+        this.topologyFileName = Util.fixEmpty(name);
     }
 
     public String getInstallation() {
@@ -39,18 +59,57 @@ public class linchPinWrapper extends SimpleBuildWrapper {
     public void setUp(Context context, Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener, EnvVars initialEnvironment)
             throws IOException, InterruptedException {
         installIfNecessary(context,workspace,listener,initialEnvironment);
-        modifyPinFile(pinfile);
+
+        createFile(layoutFile,installationHome+"/venv/layouts/",layoutFileName);
+        createFile(topologyFile,installationHome+"/venv/topologies/",topologyFileName);
+        modifyFile(pinfile);
+
+        toCmd(installationHome+"/venv","bin/linchpin up",launcher,listener);
+
+        createFile(installationHome,"/tmp/","linchpin.out");
     }
 
     /**
-     * Modify PinFile - if PinFile inserted by the user is empty - use default
+     * Create files for linchpin configuration
+     * @param file
+     * @param path
+     * @param name
+     * @throws IOException
+     */
+    private void createFile(String file, String path, String name) throws IOException{
+        if(file == null) return;
+        if(name == null) name = "defaultName.yml";
+        String fileName = path+name;
+        if(!fileName.endsWith(".yml")&&!fileName.endsWith(".out")) fileName+=".yml";
+        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+        writer.write(file+"\n");
+        writer.close();
+    }
+
+    /**
+     * Help method to launch commands to cmd
+     * @param pwd - the dir that the command is running in
+     * @param command - the command itself
+     * @param launcher
+     * @param listener
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private void toCmd(String pwd,String command,Launcher launcher, TaskListener listener)
+            throws IOException, InterruptedException{
+        Launcher.ProcStarter starter = launcher.launch().cmds(command.split(" "));
+        int exit = starter.pwd(pwd).stdout(listener).join();
+        if(exit!=0) listener.getLogger().println("Exit code is " + exit);
+    }
+
+    /**
+     * Modify File - if empty - use default
      * @param pinFile
      * @throws IOException
      */
-    private void modifyPinFile(String pinFile) throws IOException{
+    private void modifyFile(String pinFile) throws IOException{
         if(pinFile == null) return;
-        String pinFilePath = installationHome+"/venv/PinFile";
-        BufferedWriter writer = new BufferedWriter(new FileWriter(pinFilePath));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(installationHome+"/venv/PinFile"));
         writer.write(pinFile+"\n");
         writer.close();
     }
