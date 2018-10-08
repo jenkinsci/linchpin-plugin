@@ -4,7 +4,6 @@ import hudson.model.*;
 import hudson.slaves.NodeSpecific;
 import hudson.tasks.BuildWrapperDescriptor;
 import hudson.tools.ToolInstallation;
-import hudson.util.ArgumentListBuilder;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildWrapper;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -61,11 +60,13 @@ public class linchPinWrapper extends SimpleBuildWrapper {
             throws IOException, InterruptedException {
         installIfNecessary(context,workspace,listener,initialEnvironment);
 
-        createFile(layoutFile,"/venv/layouts/",layoutFileName);
-        createFile(topologyFile,"/venv/topologies/",topologyFileName);
+        createFile(layoutFile,installationHome+"/venv/layouts/",layoutFileName);
+        createFile(topologyFile,installationHome+"/venv/topologies/",topologyFileName);
         modifyFile(pinfile);
 
         toCmd(installationHome+"/venv","bin/linchpin up",launcher,listener);
+
+        createFile(installationHome,"/tmp/","linchpin.out");
     }
 
     /**
@@ -78,8 +79,8 @@ public class linchPinWrapper extends SimpleBuildWrapper {
     private void createFile(String file, String path, String name) throws IOException{
         if(file == null) return;
         if(name == null) name = "defaultName.yml";
-        String fileName = installationHome+path+name;
-        if(!fileName.endsWith(".yml")) fileName+=".yml";
+        String fileName = path+name;
+        if(!fileName.endsWith(".yml")&&!fileName.endsWith(".out")) fileName+=".yml";
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
         writer.write(file+"\n");
         writer.close();
