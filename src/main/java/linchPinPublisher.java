@@ -71,7 +71,7 @@ public class linchPinPublisher extends Publisher {
         }
 
         public String getDisplayName() {
-            return "LinchPin teardown";
+            return "LinchPin TearDown";
         }
     }
 }

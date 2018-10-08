@@ -16,7 +16,7 @@ if (installations.length != 0) {
     f.entry(title:_("PinFile:"),field:"pinfile") {
         f.textarea()
     }
-    f.advanced{
+    f.advanced(title:_("Create topology and layout files")){
         f.entry(title:_("Topology File Name:"),field:"topologyFileName"){
             f.textbox()
         }
