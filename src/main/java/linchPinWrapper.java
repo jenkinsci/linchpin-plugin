@@ -64,9 +64,26 @@ public class linchPinWrapper extends SimpleBuildWrapper {
         createFile(topologyFile,installationHome+"/venv/topologies/",topologyFileName);
         modifyFile(pinfile);
 
+        String pathToPrevInstallation = new linchPinPublisher().readTmp();
+        if(pathToPrevInstallation != null) tearDownPrevLinchPin(pathToPrevInstallation,launcher,listener);
+
         toCmd(installationHome+"/venv","bin/linchpin up",launcher,listener);
 
         createFile(installationHome,"/tmp/","linchpin.out");
+    }
+
+    /**
+     * Help method to handle the case the user didn't used the teardown on post-build.
+     * It prevents running more then one LinchPin on the same machine.
+     * @param pathToPrevInstallation
+     * @param launcher
+     * @param listener
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private void tearDownPrevLinchPin(String pathToPrevInstallation,Launcher launcher,TaskListener listener)
+            throws IOException, InterruptedException{
+        toCmd(pathToPrevInstallation+"/venv","bin/linchpin destroy",launcher,listener);
     }
 
     /**

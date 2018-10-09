@@ -1,6 +1,4 @@
-import hudson.Extension;
-import hudson.Launcher;
-import hudson.Util;
+import hudson.*;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
@@ -12,6 +10,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -37,11 +36,17 @@ public class linchPinPublisher extends Publisher {
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
         String pathToCurrentInstallation = readTmp();
+        if(pathToCurrentInstallation == null){
+            throw new AbortException("Can't find /tmp/linchpin.out");
+        }
         toCmd(pathToCurrentInstallation+"/venv","bin/linchpin destroy",launcher,listener);
+        toCmd("","rm /tmp/linchpin.out",launcher,listener);
         return true;
     }
 
-    private String readTmp() throws IOException{
+    public String readTmp() throws IOException,InterruptedException{
+        FilePath fileName = new FilePath(new File("/tmp/linchpin.out"));
+        if(!fileName.exists()) return null;
         BufferedReader br = new BufferedReader(new FileReader("/tmp/linchpin.out"));
         return br.readLine();
     }
