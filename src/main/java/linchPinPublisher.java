@@ -14,6 +14,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * @author Aviel
+ */
 public class linchPinPublisher extends Publisher {
     private String installation;
 

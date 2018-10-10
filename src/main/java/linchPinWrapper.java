@@ -14,6 +14,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * @author Aviel
+ */
+
 public class linchPinWrapper extends SimpleBuildWrapper {
     private String installation, pinfile,layoutFile,topologyFile,layoutFileName,topologyFileName;
     private String installationHome = null;
