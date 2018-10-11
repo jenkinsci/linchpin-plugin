@@ -38,15 +38,21 @@ public class linchPinPublisher extends Publisher {
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        String pathToCurrentInstallation = readTmp();
-        if(pathToCurrentInstallation == null){
-            throw new AbortException("Can't find /tmp/linchpin.out");
+        if(readTmp() == null){
+            throw new AbortException("You might want to use LinchPin first.");
         }
+
         toCmd(build.getWorkspace()+"/venv", "bin/linchpin destroy",launcher,listener);
         toCmd("","rm /tmp/linchpin.out",launcher,listener);
         return true;
     }
 
+    /**
+     * Read the /tmp/linchpin.out file to see if previous LinchPin is still running
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public String readTmp() throws IOException,InterruptedException{
         FilePath fileName = new FilePath(new File("/tmp/linchpin.out"));
         if(!fileName.exists()) return null;

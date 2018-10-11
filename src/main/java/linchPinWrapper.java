@@ -61,7 +61,7 @@ public class linchPinWrapper extends SimpleBuildWrapper {
     @Override
     public void setUp(Context context, Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener, EnvVars initialEnvironment)
             throws IOException, InterruptedException {
-        installIfNecessary(context,workspace,listener,initialEnvironment,launcher);
+        installIfNecessary(context,workspace,listener,initialEnvironment);
 
         String linchPinHome = context.getEnv().get("LINCHPIN_HOME");
 
@@ -84,6 +84,7 @@ public class linchPinWrapper extends SimpleBuildWrapper {
      * @param pathToPrevInstallation
      * @param launcher
      * @param listener
+     * @param context
      * @throws IOException
      * @throws InterruptedException
      */
@@ -116,6 +117,7 @@ public class linchPinWrapper extends SimpleBuildWrapper {
      * @param command - the command itself
      * @param launcher
      * @param listener
+     * @param context
      * @throws IOException
      * @throws InterruptedException
      */
@@ -147,7 +149,7 @@ public class linchPinWrapper extends SimpleBuildWrapper {
      * @throws IOException
      * @throws InterruptedException
      */
-    private void installIfNecessary(Context context,FilePath workspace, TaskListener listener, EnvVars initialEnvironment, Launcher launcher)
+    private void installIfNecessary(Context context,FilePath workspace, TaskListener listener, EnvVars initialEnvironment)
             throws IOException, InterruptedException{
         ToolInstallation[] tools = Jenkins.getActiveInstance().getDescriptorByType(linchPinTool.DescriptorImpl.class).getInstallations();
         ToolInstallation inst = null;
