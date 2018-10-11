@@ -20,7 +20,6 @@ import java.util.Map;
 
 public class linchPinWrapper extends SimpleBuildWrapper {
     private String installation, pinfile,layoutFile,topologyFile,layoutFileName,topologyFileName;
-    private String installationHome = null;
 
     @DataBoundConstructor
     public linchPinWrapper() {}
@@ -62,18 +61,21 @@ public class linchPinWrapper extends SimpleBuildWrapper {
     @Override
     public void setUp(Context context, Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener, EnvVars initialEnvironment)
             throws IOException, InterruptedException {
-        installIfNecessary(context,workspace,listener,initialEnvironment);
+        installIfNecessary(context,workspace,listener,initialEnvironment,launcher);
 
-        createFile(layoutFile,installationHome+"/venv/layouts/",layoutFileName);
-        createFile(topologyFile,installationHome+"/venv/topologies/",topologyFileName);
+        String linchPinHome = context.getEnv().get("LINCHPIN_HOME");
+
+        createFile(layoutFile,linchPinHome+"/layouts/",layoutFileName);
+        createFile(topologyFile,linchPinHome+"/topologies/",topologyFileName);
         modifyFile(pinfile);
 
         String pathToPrevInstallation = new linchPinPublisher().readTmp();
-        if(pathToPrevInstallation != null) tearDownPrevLinchPin(pathToPrevInstallation,launcher,listener);
+        if(pathToPrevInstallation != null) tearDownPrevLinchPin(pathToPrevInstallation,launcher,listener,context);
 
-        toCmd(installationHome+"/venv","bin/linchpin up",launcher,listener);
+        toCmd(workspace + "","ln -s "+linchPinHome+"/* "+workspace,launcher,listener,context);
+        toCmd(linchPinHome,"bin/linchpin up",launcher,listener,context);
 
-        createFile(installationHome,"/tmp/","linchpin.out");
+        createFile(linchPinHome,"/tmp/","linchpin.out");
     }
 
     /**
@@ -85,9 +87,9 @@ public class linchPinWrapper extends SimpleBuildWrapper {
      * @throws IOException
      * @throws InterruptedException
      */
-    private void tearDownPrevLinchPin(String pathToPrevInstallation,Launcher launcher,TaskListener listener)
+    private void tearDownPrevLinchPin(String pathToPrevInstallation,Launcher launcher,TaskListener listener,Context context)
             throws IOException, InterruptedException{
-        toCmd(pathToPrevInstallation+"/venv","bin/linchpin destroy",launcher,listener);
+        toCmd(pathToPrevInstallation,"bin/linchpin destroy",launcher,listener,context);
     }
 
     /**
@@ -116,10 +118,10 @@ public class linchPinWrapper extends SimpleBuildWrapper {
      * @throws IOException
      * @throws InterruptedException
      */
-    private void toCmd(String pwd,String command,Launcher launcher, TaskListener listener)
+    private void toCmd(String pwd,String command,Launcher launcher, TaskListener listener,Context context)
             throws IOException, InterruptedException{
         Launcher.ProcStarter starter = launcher.launch().cmds(command.split(" "));
-        int exit = starter.pwd(pwd).stdout(listener).join();
+        int exit = starter.pwd(pwd).envs(context.getEnv()).stdout(listener).join();
         if(exit!=0) listener.getLogger().println("Exit code is " + exit);
     }
 
@@ -130,7 +132,7 @@ public class linchPinWrapper extends SimpleBuildWrapper {
      */
     private void modifyFile(String pinFile) throws IOException{
         if(pinFile == null) return;
-        BufferedWriter writer = new BufferedWriter(new FileWriter(installationHome+"/venv/PinFile"));
+        BufferedWriter writer = new BufferedWriter(new FileWriter("$LINCHPIN_HOME/PinFile"));
         writer.write(pinFile+"\n");
         writer.close();
     }
@@ -144,7 +146,7 @@ public class linchPinWrapper extends SimpleBuildWrapper {
      * @throws IOException
      * @throws InterruptedException
      */
-    private void installIfNecessary(Context context,FilePath workspace, TaskListener listener, EnvVars initialEnvironment)
+    private void installIfNecessary(Context context,FilePath workspace, TaskListener listener, EnvVars initialEnvironment, Launcher launcher)
             throws IOException, InterruptedException{
         ToolInstallation[] tools = Jenkins.getActiveInstance().getDescriptorByType(linchPinTool.DescriptorImpl.class).getInstallations();
         ToolInstallation inst = null;
@@ -176,7 +178,6 @@ public class linchPinWrapper extends SimpleBuildWrapper {
                 context.env(entry.getKey(), entry.getValue());
             }
         }
-        installationHome = inst.getHome();
     }
     @Extension
     public static class DescriptorImpl extends BuildWrapperDescriptor{

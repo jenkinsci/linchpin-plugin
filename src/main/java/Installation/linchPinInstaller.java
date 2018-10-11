@@ -1,5 +1,6 @@
 package Installation;
 
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -76,7 +77,7 @@ public class linchPinInstaller extends ToolInstaller {
             print(listener, "Skipping installation - LinchPin "+e.getMessage());
         }
 
-        //Initial linchpin
+        //Initiate linchpin
         try{
             toCmd(dirToInstall.getParent()+ "/venv","bin/linchpin init",node,listener);
         }catch (Exception e){

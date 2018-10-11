@@ -42,7 +42,7 @@ public class linchPinPublisher extends Publisher {
         if(pathToCurrentInstallation == null){
             throw new AbortException("Can't find /tmp/linchpin.out");
         }
-        toCmd(pathToCurrentInstallation+"/venv","bin/linchpin destroy",launcher,listener);
+        toCmd(build.getWorkspace()+"/venv", "bin/linchpin destroy",launcher,listener);
         toCmd("","rm /tmp/linchpin.out",launcher,listener);
         return true;
     }
