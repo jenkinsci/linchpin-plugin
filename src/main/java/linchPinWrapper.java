@@ -89,6 +89,7 @@ public class linchPinWrapper extends SimpleBuildWrapper {
      */
     private void tearDownPrevLinchPin(String pathToPrevInstallation,Launcher launcher,TaskListener listener,Context context)
             throws IOException, InterruptedException{
+        listener.error("Please Use LinchPin TearDown Option At The Post-Build Action!");
         toCmd(pathToPrevInstallation,"bin/linchpin destroy",launcher,listener,context);
     }
 
