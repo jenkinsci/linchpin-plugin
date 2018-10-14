@@ -1,20 +1,19 @@
-import hudson.Extension;
-import hudson.Launcher;
-import hudson.Util;
+import hudson.*;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import util.linchPinUtil;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * @author Aviel
+ */
 public class linchPinPublisher extends Publisher {
     private String installation;
 
@@ -35,32 +34,18 @@ public class linchPinPublisher extends Publisher {
     }
 
     @Override
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        String pathToCurrentInstallation = readTmp();
-        toCmd(pathToCurrentInstallation+"/venv","bin/linchpin destroy",launcher,listener);
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
+            throws InterruptedException, IOException {
+        linchPinUtil util = new linchPinUtil();
+        if(util.readTmp() == null){
+            throw new AbortException("You might want to use LinchPin first.");
+        }
+
+        util.toCmd(build.getWorkspace() + "", "bin/linchpin destroy",launcher,listener);
+        util.toCmd("","rm /tmp/linchpin.out",launcher,listener);
         return true;
     }
 
-    private String readTmp() throws IOException{
-        BufferedReader br = new BufferedReader(new FileReader("/tmp/linchpin.out"));
-        return br.readLine();
-    }
-
-    /**
-     * Help method to launch commands to cmd
-     * @param pwd - the dir that the command is running in
-     * @param command - the command itself
-     * @param launcher
-     * @param listener
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    private void toCmd(String pwd,String command,Launcher launcher, TaskListener listener)
-            throws IOException, InterruptedException{
-        Launcher.ProcStarter starter = launcher.launch().cmds(command.split(" "));
-        int exit = starter.pwd(pwd).stdout(listener).join();
-        if(exit!=0) listener.getLogger().println("Exit code is " + exit);
-    }
 
     @Extension
     public static class DescriptorImp extends BuildStepDescriptor<Publisher> {
@@ -71,7 +56,7 @@ public class linchPinPublisher extends Publisher {
         }
 
         public String getDisplayName() {
-            return "LinchPin teardown";
+            return "LinchPin TearDown";
         }
     }
 }

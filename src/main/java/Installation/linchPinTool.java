@@ -38,7 +38,7 @@ public class linchPinTool extends ToolInstallation
 
     @Override
     public void buildEnvVars(EnvVars env) {
-        env.put("LINCHPIN_HOME",getHome());
+        env.put("LINCHPIN_HOME",getHome() + "/venv");
         env.put("PATH+LINCHPIN", getHome() + "/venv/bin");
     }
 
