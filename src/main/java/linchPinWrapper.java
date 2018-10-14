@@ -19,36 +19,15 @@ import java.util.Map;
 /**
  * @author Aviel
  */
-
 public class linchPinWrapper extends SimpleBuildWrapper {
-    private String installation, pinfile,layoutFile,topologyFile,layoutFileName,topologyFileName;
+    private String installation, pinFile;
 
     @DataBoundConstructor
     public linchPinWrapper() {}
 
     @DataBoundSetter
     public void setPinFile(String file){
-        this.pinfile = Util.fixEmpty(file);
-    }
-
-    @DataBoundSetter
-    public void setLayoutFile(String file){
-        this.layoutFile = Util.fixEmpty(file);
-    }
-
-    @DataBoundSetter
-    public void setTopologyFile(String file){
-        this.topologyFile = Util.fixEmpty(file);
-    }
-
-    @DataBoundSetter
-    public void setLayoutFileName(String name){
-        this.layoutFileName = Util.fixEmpty(name);
-    }
-
-    @DataBoundSetter
-    public void setTopologyFileName(String name){
-        this.topologyFileName = Util.fixEmpty(name);
+        this.pinFile = Util.fixEmpty(file);
     }
 
     public String getInstallation() {
@@ -66,19 +45,25 @@ public class linchPinWrapper extends SimpleBuildWrapper {
         linchPinUtil util = new linchPinUtil();
         installIfNecessary(context,workspace,listener,initialEnvironment,launcher,util);
 
-        util.createFile(layoutFile,workspace+"/layouts/",layoutFileName);
-        util.createFile(topologyFile,workspace+"/topologies/",topologyFileName);
-        modifyPinFile(pinfile,workspace+"");
+        modifyPinFile(pinFile,workspace+"");
 
         String pathToPrevInstallation = util.readTmp();
         if(pathToPrevInstallation != null && new FilePath(new File(pathToPrevInstallation)).exists())
             util.tearDownPrevLinchPin(pathToPrevInstallation,launcher,listener,context);
 
-        util.toCmd(workspace + "","bin/linchpin up",launcher,listener,context);
-
         util.createFile(workspace + "","/tmp/","linchpin.out");
     }
 
+    /**
+     * initiate linchpin on workspace
+     * @param context
+     * @param util
+     * @param workspace
+     * @param launcher
+     * @param listener
+     * @throws IOException
+     * @throws InterruptedException
+     */
     private void linchPinInit(Context context,linchPinUtil util,FilePath workspace,Launcher launcher,TaskListener listener)
             throws IOException,InterruptedException{
         String linchPinHome = context.getEnv().get("LINCHPIN_HOME");
