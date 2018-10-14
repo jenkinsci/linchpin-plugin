@@ -24,7 +24,7 @@ Select **"Add build step"** > **"LinchPin Up"**.
 ![](src/main/resources/readme/linchPinBuild.png)  
 
 ### Post-build Actions  
-**Very Important!** Select **"Add post-build action"** > **"LinchPin TearDown"**
+_**Very Important!**_ Select **"Add post-build action"** > **"LinchPin TearDown"**
 If not selected LinchPin will continue to run! 
 
 ![](src/main/resources/readme/linchPinPostBuild.png)
@@ -41,7 +41,7 @@ Then **"Add Parameter"** > **"File Parameter"**.
  
 ![](src/main/resources/readme/topo.jpg) 
 
-_**Common Error :**_ entering _"/layouts/yourFile.yml"_ won't work! > use _"layouts/yourFile.yml"_ (without the first '/').  
+_**Common Error :**_ entering _"/layouts/yourFile.yml"_ won't work! > use _"layouts/yourFile.yml"_ instead (without the first '/').  
 
 
 
