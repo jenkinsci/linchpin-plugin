@@ -24,10 +24,7 @@ public class linchPinBuilder extends Builder implements SimpleBuildStep {
 
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        listener.getLogger().println("--------------Second perform----------------");
-        linchPinUtil util = new linchPinUtil();
-        util.toCmd(build.getWorkspace()+"","bin/linchpin up",launcher,listener);
-        listener.getLogger().println("--------------Second perform----------------");
+        new linchPinUtil().toCmd(build.getWorkspace()+"","bin/linchpin up",launcher,listener);
         return true;
     }
 
