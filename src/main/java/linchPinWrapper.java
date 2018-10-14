@@ -8,8 +8,10 @@ import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildWrapper;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import util.linchPinUtil;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
@@ -61,82 +63,42 @@ public class linchPinWrapper extends SimpleBuildWrapper {
     @Override
     public void setUp(Context context, Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener, EnvVars initialEnvironment)
             throws IOException, InterruptedException {
-        installIfNecessary(context,workspace,listener,initialEnvironment);
+        linchPinUtil util = new linchPinUtil();
+        installIfNecessary(context,workspace,listener,initialEnvironment,launcher,util);
 
+        util.createFile(layoutFile,workspace+"/layouts/",layoutFileName);
+        util.createFile(topologyFile,workspace+"/topologies/",topologyFileName);
+        modifyPinFile(pinfile,workspace+"");
+
+        String pathToPrevInstallation = util.readTmp();
+        if(pathToPrevInstallation != null && new FilePath(new File(pathToPrevInstallation)).exists())
+            util.tearDownPrevLinchPin(pathToPrevInstallation,launcher,listener,context);
+
+        util.toCmd(workspace + "","bin/linchpin up",launcher,listener,context);
+
+        util.createFile(workspace + "","/tmp/","linchpin.out");
+    }
+
+    private void linchPinInit(Context context,linchPinUtil util,FilePath workspace,Launcher launcher,TaskListener listener)
+            throws IOException,InterruptedException{
         String linchPinHome = context.getEnv().get("LINCHPIN_HOME");
-
-        createFile(layoutFile,linchPinHome+"/layouts/",layoutFileName);
-        createFile(topologyFile,linchPinHome+"/topologies/",topologyFileName);
-        modifyFile(pinfile);
-
-        String pathToPrevInstallation = new linchPinPublisher().readTmp();
-        if(pathToPrevInstallation != null) tearDownPrevLinchPin(pathToPrevInstallation,launcher,listener,context);
-
-        toCmd(workspace + "","ln -s "+linchPinHome+"/* "+workspace,launcher,listener,context);
-        toCmd(linchPinHome,"bin/linchpin up",launcher,listener,context);
-
-        createFile(linchPinHome,"/tmp/","linchpin.out");
+        FilePath venv = new FilePath(new File(linchPinHome));
+        for (int i = 0; i < venv.list().size(); ++i){
+            util.toCmd(workspace + "","ln -s "+venv.list().get(i)+" "+workspace,launcher,listener,context);
+        }
+        util.toCmd(workspace + "", "bin/linchpin init",launcher,listener,context);
     }
 
     /**
-     * Help method to handle the case the user didn't used the teardown on post-build.
-     * It prevents running more then one LinchPin on the same machine.
-     * @param pathToPrevInstallation
-     * @param launcher
-     * @param listener
-     * @param context
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    private void tearDownPrevLinchPin(String pathToPrevInstallation,Launcher launcher,TaskListener listener,Context context)
-            throws IOException, InterruptedException{
-        listener.error("Please Use LinchPin TearDown Option At The Post-Build Action!");
-        toCmd(pathToPrevInstallation,"bin/linchpin destroy",launcher,listener,context);
-    }
-
-    /**
-     * Create files for linchpin configuration
-     * @param file
+     * Modify PinFile - if empty - use default
+     * @param content
      * @param path
-     * @param name
      * @throws IOException
      */
-    private void createFile(String file, String path, String name) throws IOException{
-        if(file == null) return;
-        if(name == null) name = "defaultName.yml";
-        String fileName = path+name;
-        if(!fileName.endsWith(".yml")&&!fileName.endsWith(".out")) fileName+=".yml";
-        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-        writer.write(file+"\n");
-        writer.close();
-    }
-
-    /**
-     * Help method to launch commands to cmd
-     * @param pwd - the dir that the command is running in
-     * @param command - the command itself
-     * @param launcher
-     * @param listener
-     * @param context
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    private void toCmd(String pwd,String command,Launcher launcher, TaskListener listener,Context context)
-            throws IOException, InterruptedException{
-        Launcher.ProcStarter starter = launcher.launch().cmds(command.split(" "));
-        int exit = starter.pwd(pwd).envs(context.getEnv()).stdout(listener).join();
-        if(exit!=0) listener.getLogger().println("Exit code is " + exit);
-    }
-
-    /**
-     * Modify File - if empty - use default
-     * @param pinFile
-     * @throws IOException
-     */
-    private void modifyFile(String pinFile) throws IOException{
-        if(pinFile == null) return;
-        BufferedWriter writer = new BufferedWriter(new FileWriter("$LINCHPIN_HOME/PinFile"));
-        writer.write(pinFile+"\n");
+    private void modifyPinFile(String content,String path) throws IOException{
+        if(content == null) return;
+        BufferedWriter writer = new BufferedWriter(new FileWriter(path+"/PinFile"));
+        writer.write(content+"\n");
         writer.close();
     }
 
@@ -149,7 +111,7 @@ public class linchPinWrapper extends SimpleBuildWrapper {
      * @throws IOException
      * @throws InterruptedException
      */
-    private void installIfNecessary(Context context,FilePath workspace, TaskListener listener, EnvVars initialEnvironment)
+    private void installIfNecessary(Context context,FilePath workspace, TaskListener listener, EnvVars initialEnvironment,Launcher launcher,linchPinUtil util)
             throws IOException, InterruptedException{
         ToolInstallation[] tools = Jenkins.getActiveInstance().getDescriptorByType(linchPinTool.DescriptorImpl.class).getInstallations();
         ToolInstallation inst = null;
@@ -180,6 +142,9 @@ public class linchPinWrapper extends SimpleBuildWrapper {
             for (Map.Entry<String, String> entry : modified.entrySet()) {
                 context.env(entry.getKey(), entry.getValue());
             }
+
+            if(!new FilePath(new File(workspace+"/PinFile")).exists())
+                linchPinInit(context,util,workspace,launcher,listener);
         }
     }
     @Extension

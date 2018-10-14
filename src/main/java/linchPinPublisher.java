@@ -2,16 +2,13 @@ import hudson.*;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import util.linchPinUtil;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 
 /**
@@ -37,44 +34,18 @@ public class linchPinPublisher extends Publisher {
     }
 
     @Override
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        if(readTmp() == null){
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
+            throws InterruptedException, IOException {
+        linchPinUtil util = new linchPinUtil();
+        if(util.readTmp() == null){
             throw new AbortException("You might want to use LinchPin first.");
         }
 
-        toCmd(build.getWorkspace()+"/venv", "bin/linchpin destroy",launcher,listener);
-        toCmd("","rm /tmp/linchpin.out",launcher,listener);
+        util.toCmd(build.getWorkspace() + "", "bin/linchpin destroy",launcher,listener);
+        util.toCmd("","rm /tmp/linchpin.out",launcher,listener);
         return true;
     }
 
-    /**
-     * Read the /tmp/linchpin.out file to see if previous LinchPin is still running
-     * @return
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    public String readTmp() throws IOException,InterruptedException{
-        FilePath fileName = new FilePath(new File("/tmp/linchpin.out"));
-        if(!fileName.exists()) return null;
-        BufferedReader br = new BufferedReader(new FileReader("/tmp/linchpin.out"));
-        return br.readLine();
-    }
-
-    /**
-     * Help method to launch commands to cmd
-     * @param pwd - the dir that the command is running in
-     * @param command - the command itself
-     * @param launcher
-     * @param listener
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    private void toCmd(String pwd,String command,Launcher launcher, TaskListener listener)
-            throws IOException, InterruptedException{
-        Launcher.ProcStarter starter = launcher.launch().cmds(command.split(" "));
-        int exit = starter.pwd(pwd).stdout(listener).join();
-        if(exit!=0) listener.getLogger().println("Exit code is " + exit);
-    }
 
     @Extension
     public static class DescriptorImp extends BuildStepDescriptor<Publisher> {

@@ -75,13 +75,6 @@ public class linchPinInstaller extends ToolInstaller {
         }catch (Exception e){
             print(listener, "Skipping installation - LinchPin "+e.getMessage());
         }
-
-        //Initiate linchpin
-        try{
-            toCmd(dirToInstall.getParent()+ "/venv","bin/linchpin init",node,listener);
-        }catch (Exception e){
-            print(listener, "Skipping initialization - LinchPin "+e.getMessage());
-        }
     }
 
     /**
