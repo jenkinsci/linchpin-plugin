@@ -6,4 +6,5 @@ makefile
 /.idea
 /.factorypath
 /.classpath
+/.settings
 
