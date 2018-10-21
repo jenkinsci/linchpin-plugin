@@ -8,6 +8,7 @@ import hudson.model.TaskListener;
 import hudson.tools.ToolInstallation;
 import hudson.tools.ToolInstaller;
 import hudson.tools.ToolInstallerDescriptor;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
@@ -127,7 +128,7 @@ public class linchPinInstaller extends ToolInstaller {
         if(exit!=0) listener.getLogger().println("Exit code is " + exit);
     }
 
-    @Extension
+    @Extension @Symbol("linchPinInstaller")
     public static class DescriptorImpl extends ToolInstallerDescriptor<linchPinInstaller>{
         @Override
         public String getDisplayName() { return "LinchPin Installer"; }

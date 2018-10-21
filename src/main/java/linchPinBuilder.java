@@ -5,6 +5,7 @@ import hudson.model.*;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import jenkins.tasks.SimpleBuildStep;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import util.linchPinUtil;
 
@@ -20,15 +21,11 @@ public class linchPinBuilder extends Builder implements SimpleBuildStep {
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener)
-            throws InterruptedException, IOException {}
-
-    @Override
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        new linchPinUtil().toCmd(build.getWorkspace()+"","bin/linchpin up",launcher,listener);
-        return true;
+            throws InterruptedException, IOException {
+        new linchPinUtil().toCmd(run.getEnvironment(listener).get("WORKSPACE"),"bin/linchpin up",launcher,listener);
     }
 
-    @Extension
+    @Extension @Symbol("linchPinUp")
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
         @Override
         public String getDisplayName() { return "LinchPin Up";}
