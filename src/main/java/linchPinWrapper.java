@@ -6,6 +6,7 @@ import hudson.tasks.BuildWrapperDescriptor;
 import hudson.tools.ToolInstallation;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildWrapper;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import util.linchPinUtil;
@@ -132,7 +133,7 @@ public class linchPinWrapper extends SimpleBuildWrapper {
                 linchPinInit(context,util,workspace,launcher,listener);
         }
     }
-    @Extension
+    @Extension @Symbol("withLinchPin")
     public static class DescriptorImpl extends BuildWrapperDescriptor{
 
         public DescriptorImpl() {

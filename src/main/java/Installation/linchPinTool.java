@@ -10,6 +10,7 @@ import hudson.slaves.NodeSpecific;
 import hudson.tools.ToolDescriptor;
 import hudson.tools.ToolInstallation;
 import hudson.tools.ToolProperty;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class linchPinTool extends ToolInstallation
         env.put("PATH+LINCHPIN", getHome() + "/venv/bin");
     }
 
-    @Extension
+    @Extension @Symbol("linchPin")
     public static class DescriptorImpl extends ToolDescriptor<linchPinTool> {
         public DescriptorImpl() {
             load();
