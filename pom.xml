@@ -90,11 +90,10 @@
 
     <url>https://wiki.jenkins.io/display/JENKINS/LinchPin+Plugin</url>
     <scm>
-        <connection>scm:git:git://github.com/jenkinsci/linchpin-plugin.git</connection>
-        <developerConnection>scm:git:Avielyo10@github.com:jenkinsci/linchpin-plugin.git</developerConnection>
-        <url>https://github.com/jenkinsci/linchpin-plugin</url>
+       <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
+       <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
     </scm>
-
+ 
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
