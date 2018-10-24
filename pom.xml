@@ -10,7 +10,7 @@
     <groupId>io.jenkins.plugins</groupId>
     <artifactId>linchpin</artifactId>
     <version>1.0</version>
-    <url>https://wiki.jenkins.io/display/JENKINS/LinchPin+Plugin</url>
+
     <packaging>hpi</packaging>
     <properties>
         <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
@@ -81,23 +81,20 @@
         </dependency>
     </dependencies>
 
-    <!-- If you want this to appear on the wiki page:
     <developers>
       <developer>
-        <id>bhacker</id>
-        <name>Bob Q. Hacker</name>
-        <email>bhacker@nowhere.net</email>
+        <id>avielyosef</id>
+        <name>Aviel Yosef</name>
       </developer>
-    </developers> -->
+    </developers>
 
-    <!-- Assuming you want to host on @jenkinsci:
-    <url>https://wiki.jenkins.io/display/JENKINS/Plugin</url>
+    <url>https://wiki.jenkins.io/display/JENKINS/LinchPin+Plugin</url>
     <scm>
-        <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-        <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
+        <connection>scm:git:git://github.com/jenkinsci/linchpin-plugin.git</connection>
+        <developerConnection>scm:git:Avielyo10@github.com:jenkinsci/linchpin-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/linchpin-plugin</url>
     </scm>
-    -->
+
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
