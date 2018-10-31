@@ -44,7 +44,7 @@ Possible **`"File location"`** s are:
 - _`"resources/"`_. 
 
 ---
-###Example  
+### Example  
 **Adding layout file** - on the **`"File location"`** enter first _`"layouts/"`_ then the file name you want it to be called, **don't forget the file extention!** 
  
 ![](src/main/resources/readme/layouts.jpg) 
