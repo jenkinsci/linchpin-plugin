@@ -1,4 +1,4 @@
-import Installation.linchPinTool;
+import Installation.LinchPinTool;
 import hudson.*;
 import hudson.model.*;
 import hudson.slaves.NodeSpecific;
@@ -9,22 +9,20 @@ import jenkins.tasks.SimpleBuildWrapper;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-import util.linchPinUtil;
+import util.LinchPinUtil;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
  * @author Aviel
  */
-public class linchPinWrapper extends SimpleBuildWrapper {
+public class LinchPinWrapper extends SimpleBuildWrapper {
     private String installation, pinFile;
 
     @DataBoundConstructor
-    public linchPinWrapper() {}
+    public LinchPinWrapper() {}
 
     @DataBoundSetter
     public void setPinFile(String file){
@@ -43,7 +41,7 @@ public class linchPinWrapper extends SimpleBuildWrapper {
     @Override
     public void setUp(Context context, Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener, EnvVars initialEnvironment)
             throws IOException, InterruptedException {
-        linchPinUtil util = new linchPinUtil();
+        LinchPinUtil util = new LinchPinUtil();
         installIfNecessary(context,workspace,listener,initialEnvironment,launcher,util);
 
         modifyPinFile(pinFile,workspace+"");
@@ -65,7 +63,7 @@ public class linchPinWrapper extends SimpleBuildWrapper {
      * @throws IOException
      * @throws InterruptedException
      */
-    private void linchPinInit(Context context,linchPinUtil util,FilePath workspace,Launcher launcher,TaskListener listener)
+    private void linchPinInit(Context context, LinchPinUtil util, FilePath workspace, Launcher launcher, TaskListener listener)
             throws IOException,InterruptedException{
         String linchPinHome = context.getEnv().get("LINCHPIN_HOME");
         FilePath venv = new FilePath(new File(linchPinHome));
@@ -83,7 +81,8 @@ public class linchPinWrapper extends SimpleBuildWrapper {
      */
     private void modifyPinFile(String content,String path) throws IOException{
         if(content == null) return;
-        BufferedWriter writer = new BufferedWriter(new FileWriter(path+"/PinFile"));
+        BufferedWriter writer = new BufferedWriter
+                (new OutputStreamWriter(new FileOutputStream(path+"/PinFile"), StandardCharsets.UTF_8));
         writer.write(content+"\n");
         writer.close();
     }
@@ -97,9 +96,9 @@ public class linchPinWrapper extends SimpleBuildWrapper {
      * @throws IOException
      * @throws InterruptedException
      */
-    private void installIfNecessary(Context context,FilePath workspace, TaskListener listener, EnvVars initialEnvironment,Launcher launcher,linchPinUtil util)
+    private void installIfNecessary(Context context, FilePath workspace, TaskListener listener, EnvVars initialEnvironment, Launcher launcher, LinchPinUtil util)
             throws IOException, InterruptedException{
-        ToolInstallation[] tools = Jenkins.getActiveInstance().getDescriptorByType(linchPinTool.DescriptorImpl.class).getInstallations();
+        ToolInstallation[] tools = Jenkins.getActiveInstance().getDescriptorByType(LinchPinTool.DescriptorImpl.class).getInstallations();
         ToolInstallation inst = null;
         for (ToolInstallation _inst : tools) {
             if (_inst.getName().equals(installation)) {
@@ -137,7 +136,7 @@ public class linchPinWrapper extends SimpleBuildWrapper {
     public static class DescriptorImpl extends BuildWrapperDescriptor{
 
         public DescriptorImpl() {
-            super(linchPinWrapper.class);
+            super(LinchPinWrapper.class);
         }
 
         @Override

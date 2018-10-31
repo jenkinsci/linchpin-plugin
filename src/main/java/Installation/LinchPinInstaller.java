@@ -17,9 +17,9 @@ import java.net.URL;
 /**
  * @author Aviel
  */
-public class linchPinInstaller extends ToolInstaller {
+public class LinchPinInstaller extends ToolInstaller {
     @DataBoundConstructor
-    public linchPinInstaller(String label) {
+    public LinchPinInstaller(String label) {
         super(label);
     }
 
@@ -135,14 +135,14 @@ public class linchPinInstaller extends ToolInstaller {
         if(exit!=0) listener.getLogger().println("Exit code is " + exit);
     }
 
-    @Extension @Symbol("linchPinInstaller")
-    public static class DescriptorImpl extends ToolInstallerDescriptor<linchPinInstaller>{
+    @Extension @Symbol("LinchPinInstaller")
+    public static class DescriptorImpl extends ToolInstallerDescriptor<LinchPinInstaller>{
         @Override
         public String getDisplayName() { return "LinchPin Installer"; }
 
         @Override
         public boolean isApplicable(Class<? extends ToolInstallation> toolType) {
-            return toolType == linchPinTool.class;
+            return toolType == LinchPinTool.class;
         }
     }
 }
