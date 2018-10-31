@@ -19,22 +19,22 @@ import java.util.List;
 /**
  * @author Aviel
  */
-public class linchPinTool extends ToolInstallation
-        implements NodeSpecific<linchPinTool>, EnvironmentSpecific<linchPinTool> {
+public class LinchPinTool extends ToolInstallation
+        implements NodeSpecific<LinchPinTool>, EnvironmentSpecific<LinchPinTool> {
 
     @DataBoundConstructor
-    public linchPinTool(String name, String home, List<? extends ToolProperty<?>> properties) {
+    public LinchPinTool(String name, String home, List<? extends ToolProperty<?>> properties) {
         super(name, home, properties);
     }
 
     @Override
-    public linchPinTool forEnvironment(EnvVars envVars) {
-        return new linchPinTool(getName(),envVars.expand(getHome()),getProperties().toList());
+    public LinchPinTool forEnvironment(EnvVars envVars) {
+        return new LinchPinTool(getName(),envVars.expand(getHome()),getProperties().toList());
     }
 
     @Override
-    public linchPinTool forNode(@NonNull Node node, TaskListener taskListener) throws IOException, InterruptedException {
-        return new linchPinTool(getName(),translateFor(node,taskListener),getProperties().toList());
+    public LinchPinTool forNode(@NonNull Node node, TaskListener taskListener) throws IOException, InterruptedException {
+        return new LinchPinTool(getName(),translateFor(node,taskListener),getProperties().toList());
     }
 
     @Override
@@ -44,7 +44,7 @@ public class linchPinTool extends ToolInstallation
     }
 
     @Extension @Symbol("linchPin")
-    public static class DescriptorImpl extends ToolDescriptor<linchPinTool> {
+    public static class DescriptorImpl extends ToolDescriptor<LinchPinTool> {
         public DescriptorImpl() {
             load();
         }
@@ -55,7 +55,7 @@ public class linchPinTool extends ToolInstallation
         }
 
         @Override
-        public void setInstallations(linchPinTool... installations) {
+        public void setInstallations(LinchPinTool... installations) {
             super.setInstallations(installations);
             save();
         }

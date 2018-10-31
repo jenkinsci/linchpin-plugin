@@ -6,8 +6,9 @@ import hudson.model.TaskListener;
 import jenkins.tasks.SimpleBuildWrapper;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
-public class linchPinUtil {
+public class LinchPinUtil {
     /**
      * Read the /tmp/linchpin.out file to see if previous LinchPin is still running
      * @return
@@ -15,10 +16,13 @@ public class linchPinUtil {
      * @throws InterruptedException
      */
     public String readTmp() throws IOException,InterruptedException{
-        FilePath fileName = new FilePath(new File("/tmp/linchpin.out"));
-        if(!fileName.exists()) return null;
-        BufferedReader br = new BufferedReader(new FileReader("/tmp/linchpin.out"));
-        return br.readLine();
+        File file = new File("/tmp/linchpin.out");
+        if(!new FilePath(file).exists()) return null;
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+        String line = br.readLine();
+        br.close();
+        return line;
     }
 
     /**
@@ -81,7 +85,8 @@ public class linchPinUtil {
         if(name == null) name = "defaultName.yml";
         String fileName = path+name;
         if(!fileName.endsWith(".yml")&&!fileName.endsWith(".out")) fileName+=".yml";
-        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+        BufferedWriter writer = new BufferedWriter
+                (new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8));
         writer.write(content+"\n");
         writer.close();
     }

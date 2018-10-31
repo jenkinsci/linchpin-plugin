@@ -7,7 +7,7 @@ import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-import util.linchPinUtil;
+import util.LinchPinUtil;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -15,11 +15,11 @@ import java.io.IOException;
 /**
  * @author Aviel
  */
-public class linchPinPublisher extends Publisher implements SimpleBuildStep {
+public class LinchPinPublisher extends Publisher implements SimpleBuildStep {
     private String inventory;
 
     @DataBoundConstructor
-    public linchPinPublisher() { }
+    public LinchPinPublisher() { }
 
     public String getInventory() {
         return inventory;
@@ -35,7 +35,7 @@ public class linchPinPublisher extends Publisher implements SimpleBuildStep {
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
-        linchPinUtil util = new linchPinUtil();
+        LinchPinUtil util = new LinchPinUtil();
         if(util.readTmp() == null){
             throw new AbortException("You might want to use LinchPin first.");
         }

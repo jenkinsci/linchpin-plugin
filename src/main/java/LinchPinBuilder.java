@@ -9,7 +9,7 @@ import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-import util.linchPinUtil;
+import util.LinchPinUtil;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -17,11 +17,11 @@ import java.io.IOException;
 /**
  * @author Aviel
  */
-public class linchPinBuilder extends Builder implements SimpleBuildStep {
+public class LinchPinBuilder extends Builder implements SimpleBuildStep {
     private String inventory;
 
     @DataBoundConstructor
-    public linchPinBuilder() { }
+    public LinchPinBuilder() { }
 
     public String getInventory() {
         return inventory;
@@ -33,7 +33,7 @@ public class linchPinBuilder extends Builder implements SimpleBuildStep {
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener)
             throws InterruptedException, IOException {
-        linchPinUtil util = new linchPinUtil();
+        LinchPinUtil util = new LinchPinUtil();
         String workspace = run.getEnvironment(listener).get("WORKSPACE");
 
         util.toCmd(workspace,"bin/linchpin up",launcher,listener);
