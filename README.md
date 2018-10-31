@@ -35,7 +35,7 @@ If not selected **LinchPin & Cinch** will continue to run!
 For adding  files select **`"This project is parameterized"`** on **`"General"`**.  
 Then **`"Add Parameter"`** > **`"File Parameter"`**.  
 
-Possible **`"File location"`**s are: 
+Possible **`"File location"`** s are: 
 - _`"layouts/"`_.
 - _`"topologies/"`_.
 - _`"inventories/"`_. 
@@ -44,7 +44,7 @@ Possible **`"File location"`**s are:
 - _`"resources/"`_. 
 
 ---
-###**Example**  
+###Example  
 **Adding layout file** - on the **`"File location"`** enter first _`"layouts/"`_ then the file name you want it to be called, **don't forget the file extention!** 
  
 ![](src/main/resources/readme/layouts.jpg) 
