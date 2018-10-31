@@ -16,19 +16,18 @@ import java.io.IOException;
  * @author Aviel
  */
 public class linchPinPublisher extends Publisher implements SimpleBuildStep {
-    private String installation;
+    private String inventory;
 
     @DataBoundConstructor
-    public linchPinPublisher() {}
+    public linchPinPublisher() { }
 
-    public String getInstallation() {
-        return installation;
+    public String getInventory() {
+        return inventory;
     }
 
     @DataBoundSetter
-    public void setInstallation(String installation) {
-        this.installation = Util.fixEmpty(installation);
-    }
+    public void setInventory(String inventory) { this.inventory = Util.fixEmpty(inventory); }
+
     @Override
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
@@ -41,6 +40,9 @@ public class linchPinPublisher extends Publisher implements SimpleBuildStep {
             throw new AbortException("You might want to use LinchPin first.");
         }
 
+        if(inventory != null){
+            util.toCmd(workspace + "", "bin/teardown "+inventory,launcher,listener);
+        }
         util.toCmd(workspace + "", "bin/linchpin destroy",launcher,listener);
         util.toCmd("","rm /tmp/linchpin.out",launcher,listener);
     }
@@ -55,7 +57,7 @@ public class linchPinPublisher extends Publisher implements SimpleBuildStep {
         }
 
         public String getDisplayName() {
-            return "LinchPin TearDown";
+            return "LinchPin Teardown";
         }
     }
 }

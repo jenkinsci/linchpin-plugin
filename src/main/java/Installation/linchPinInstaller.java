@@ -76,6 +76,13 @@ public class linchPinInstaller extends ToolInstaller {
         }catch (Exception e){
             print(listener, "Skipping installation - LinchPin "+e.getMessage());
         }
+
+        //Install cinch
+        try{
+            toCmd(dirToInstall.getParent()+ "/venv","bin/pip install cinch",node,listener);
+        }catch (Exception e){
+            print(listener, "Skipping installation - cinch "+e.getMessage());
+        }
     }
 
     /**
