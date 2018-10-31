@@ -32,7 +32,7 @@ If not selected **LinchPin & Cinch** will continue to run!
 ![](src/main/resources/readme/linchPinPostBuild.png)
 
 ## Adding Files To LinchPin & Cinch  
-For adding layout & topology files select **`"This project is parameterized"`** on **`"General"`**.  
+For adding  files select **`"This project is parameterized"`** on **`"General"`**.  
 Then **`"Add Parameter"`** > **`"File Parameter"`**.  
 
 Possible **`"File location"`**s are: 
