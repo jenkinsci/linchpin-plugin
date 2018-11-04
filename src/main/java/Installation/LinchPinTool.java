@@ -41,6 +41,7 @@ public class LinchPinTool extends ToolInstallation
     public void buildEnvVars(EnvVars env) {
         env.put("LINCHPIN_HOME",getHome() + "/venv");
         env.put("PATH+LINCHPIN", getHome() + "/venv/bin");
+        env.put("CINCH_HOME",getHome() + "/venv");
     }
 
     @Extension @Symbol("linchPin")

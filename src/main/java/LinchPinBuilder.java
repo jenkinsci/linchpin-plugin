@@ -39,7 +39,7 @@ public class LinchPinBuilder extends Builder implements SimpleBuildStep {
         util.toCmd(workspace,"bin/linchpin up",launcher,listener);
 
         if(inventory != null){
-            util.toCmd(workspace, "bin/cinch "+inventory,launcher,listener);
+            util.toCmd(workspace, "bin/cinch "+ inventory,launcher,listener);
         }
     }
 
