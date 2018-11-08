@@ -70,7 +70,8 @@ public class LinchPinWrapper extends SimpleBuildWrapper {
         for (int i = 0; i < venv.list().size(); ++i){
             util.toCmd(workspace + "","ln -s "+venv.list().get(i)+" "+workspace,launcher,listener,context);
         }
-        util.toCmd(workspace + "", "bin/linchpin init",launcher,listener,context);
+        FilePath pinFile = new FilePath(new File(workspace+ "/PinFile"));
+        pinFile.touch(System.currentTimeMillis());
     }
 
     /**
