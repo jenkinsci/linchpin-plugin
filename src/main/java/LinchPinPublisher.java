@@ -17,6 +17,7 @@ import java.io.IOException;
  */
 public class LinchPinPublisher extends Publisher implements SimpleBuildStep {
     private String inventory;
+    private String targets;
 
     @DataBoundConstructor
     public LinchPinPublisher() { }
@@ -27,6 +28,11 @@ public class LinchPinPublisher extends Publisher implements SimpleBuildStep {
 
     @DataBoundSetter
     public void setInventory(String inventory) { this.inventory = Util.fixEmpty(inventory); }
+
+    public String getTargets() { return targets; }
+
+    @DataBoundSetter
+    public void setTargets(String targets) { this.targets = Util.fixEmpty(targets); }
 
     @Override
     public BuildStepMonitor getRequiredMonitorService() {
@@ -43,7 +49,18 @@ public class LinchPinPublisher extends Publisher implements SimpleBuildStep {
         if(inventory != null){
             util.toCmd(workspace + "", "bin/teardown "+inventory,launcher,listener);
         }
-        util.toCmd(workspace + "", "bin/linchpin destroy",launcher,listener);
+
+        if(targets != null){
+            String[] targetsArr = targets.split(",");
+            StringBuffer trimTargets = new StringBuffer();
+            for (String s: targetsArr){
+                trimTargets.append(s.trim() + " ");
+            }
+            util.toCmd(workspace + "", "bin/linchpin destroy " + trimTargets,launcher,listener);
+        }
+        else{
+            util.toCmd(workspace + "", "bin/linchpin destroy",launcher,listener);
+        }
         util.toCmd("","rm /tmp/linchpin.out",launcher,listener);
     }
 

@@ -31,28 +31,6 @@ If not selected **LinchPin & Cinch** will continue to run!
 
 ![](src/main/resources/readme/linchPinPostBuild.png)
 
-## Adding Files To LinchPin & Cinch  
-For adding  files select **`"This project is parameterized"`** on **`"General"`**.  
-Then **`"Add Parameter"`** > **`"File Parameter"`**.  
-
-Possible **`"File location"`** s are: 
-- _`"layouts/"`_.
-- _`"topologies/"`_.
-- _`"inventories/"`_. 
-- _`"credentials/"`_.
-- _`"hooks/"`_.
-- _`"resources/"`_. 
-
----
-### Example  
-**Adding layout file** - on the **`"File location"`** enter first _`"layouts/"`_ then the file name you want it to be called, **don't forget the file extention!** 
- 
-![](src/main/resources/readme/layouts.jpg) 
-
-
-
----
-**Common Error :** entering _`"/layouts/yourFile.yml"`_ **won't work!** > use _`"layouts/yourFile.yml"`_ instead (without the first '/').  
 
 ---
 

@@ -1,16 +1,30 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
-     <f:nested>
+     <f:block>
+       <table>
+         <f:optionalBlock name="{it.targets}" title="Specify targets" inline="true">
+
+           <f:entry title="Targets:" field="targets">
+             <f:textbox/>
+           </f:entry>
+
+         </f:optionalBlock>
+       </table>
+     </f:block>
+
+     <f:advanced title="Cinch Options">
+     <f:block>
           <table>
             <f:optionalBlock name="{it.teardownCinch}" title="Teardown Cinch" inline="true">
 
-                <f:entry title="Insert Inventory:" field="inventory">
+                <f:entry title="Inventory:" field="inventory">
                     <f:textbox/>
                 </f:entry>
 
             </f:optionalBlock>
           </table>
-     </f:nested>
+     </f:block>
+     </f:advanced>
 
 </j:jelly>
