@@ -3,6 +3,7 @@ package util;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.TaskListener;
+import hudson.util.ArgumentListBuilder;
 import jenkins.tasks.SimpleBuildWrapper;
 
 import java.io.*;
@@ -40,6 +41,23 @@ public class LinchPinUtil {
         int exit = starter.pwd(pwd).stdout(listener).join();
         if(exit!=0) listener.getLogger().println("Exit code is " + exit);
     }
+
+    /**
+     * Help method to launch commands to cmd
+     * @param pwd - the dir that the command is running in
+     * @param args - the commands
+     * @param launcher
+     * @param listener
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public void toCmd(String pwd, ArgumentListBuilder args, Launcher launcher, TaskListener listener)
+            throws IOException, InterruptedException{
+        Launcher.ProcStarter starter = launcher.launch().cmds(args);
+        int exit = starter.pwd(pwd).stdout(listener).join();
+        if(exit!=0) listener.getLogger().println("Exit code is " + exit);
+    }
+
     /**
      * Help method to launch commands to cmd
      * @param pwd - the dir that the command is running in

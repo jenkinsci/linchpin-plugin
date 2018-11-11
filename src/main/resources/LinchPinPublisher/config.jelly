@@ -11,20 +11,21 @@
 
          </f:optionalBlock>
        </table>
+         <table>
+             <f:optionalBlock name="{it.teardownCinch}" title="Teardown Cinch" inline="true">
+
+                 <f:entry title="Inventory:" field="inventory" >
+                     <f:textbox/>
+                 </f:entry>
+
+             </f:optionalBlock>
+         </table>
      </f:block>
 
-     <f:advanced title="Cinch Options">
-     <f:block>
-          <table>
-            <f:optionalBlock name="{it.teardownCinch}" title="Teardown Cinch" inline="true">
-
-                <f:entry title="Inventory:" field="inventory">
-                    <f:textbox/>
-                </f:entry>
-
-            </f:optionalBlock>
-          </table>
-     </f:block>
-     </f:advanced>
+    <f:advanced>
+        <f:entry>
+            <f:checkbox title="Verbose" field="verbose"/>
+        </f:entry>
+    </f:advanced>
 
 </j:jelly>
