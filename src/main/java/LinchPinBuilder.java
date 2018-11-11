@@ -5,6 +5,7 @@ import hudson.Util;
 import hudson.model.*;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
+import hudson.util.ArgumentListBuilder;
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 public class LinchPinBuilder extends Builder implements SimpleBuildStep {
     private String inventory;
     private String targets;
+    private boolean verbose;
 
     @DataBoundConstructor
     public LinchPinBuilder() { }
@@ -37,23 +39,30 @@ public class LinchPinBuilder extends Builder implements SimpleBuildStep {
     @DataBoundSetter
     public void setTargets(String targets) { this.targets = Util.fixEmpty(targets); }
 
+    public boolean isVerbose() { return verbose; }
+
+    @DataBoundSetter
+    public void setVerbose(boolean verbose) { this.verbose = verbose; }
+
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener)
             throws InterruptedException, IOException {
         LinchPinUtil util = new LinchPinUtil();
         String workspace = run.getEnvironment(listener).get("WORKSPACE");
+        ArgumentListBuilder args = new ArgumentListBuilder();
+        args.add("bin/linchpin");
+
+        if (verbose == true) args.add("-v");
+
+        args.add("up");
 
         if(targets != null){
             String[] targetsArr = targets.split(",");
-            StringBuffer trimTargets = new StringBuffer();
             for (String s: targetsArr){
-                trimTargets.append(s.trim() + " ");
+                args.add(s.trim());
             }
-            util.toCmd(workspace,"bin/linchpin up "+ trimTargets,launcher,listener);
         }
-        else{
-            util.toCmd(workspace,"bin/linchpin up",launcher,listener);
-        }
+        util.toCmd(workspace,args,launcher,listener);
 
         if(inventory != null){
             util.toCmd(workspace, "bin/cinch "+ inventory,launcher,listener);
