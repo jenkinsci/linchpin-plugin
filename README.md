@@ -19,16 +19,23 @@ Select **`"Use LinchPin"`** then find your LinchPin and copy&paste your PinFile.
 ![](src/main/resources/readme/linchPinBuildEnv.png)  
 
 ### Build  
-Select **`"Add build step"`** > **`"LinchPin Up"`**.   
-**Optional:** **`"Cinch Up"`**, **`"Insert Inventory"`** is mandatory if selected. 
-
+Select **`"Add build step"`** > **`"LinchPin Up"`**.  
+   
+**Optional:** 
+ - **`"Specify targets"`**, select specific target/s separated with comma(",") to provision. 
+ - **`"With Cinch"`**, **`"Inventory"`** is mandatory if selected.  
+ 
 ![](src/main/resources/readme/linchPinBuild.png)  
 
 ### Post-build Actions  
-**Very Important!** Select **`"Add post-build action"`** > **`"LinchPin Teardown"`** & **`"Teardown Cinch"`** with the proper inventory if **`"Cinch Up"`** was selected on **Build**.
+**Very Important!** Select **`"Add post-build action"`** > **`"LinchPin Teardown"`** & **`"Teardown Cinch"`** with the proper inventory if **`"With Cinch"`** was selected on **Build**.
    
-If not selected **LinchPin & Cinch** will continue to run! 
-
+If not selected **LinchPin & Cinch** will continue to run!  
+ 
+**Optional:** 
+ - **`"Specify targets"`**, select specific target/s separated with comma(",") to teardown. 
+ - **`"Teardown Cinch"`**, **`"Inventory"`** is mandatory if selected.  
+ 
 ![](src/main/resources/readme/linchPinPostBuild.png)
 
 
